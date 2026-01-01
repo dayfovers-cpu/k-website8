@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Kelas - Siswa dan Jadwal</title>
+    <!-- Bootstrap CSS untuk styling menarik -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: url('fd8ab21ca650e0066c93daa1fed20e6a.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .overlay {
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+        }
+        .card-img-top {
+            border-radius: 15px 15px 0 0;
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-body {
+            color: #fff;
+        }
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .search-bar input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border-radius: 25px;
+            padding: 10px 20px;
+        }
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .schedule-day {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: background 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .schedule-day:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .hidden {
+            display: none;
+        }
+        .astronaut-icon {
+            font-size: 2rem;
+            color: #ffd700;
+        }
+        h2, h5 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#"><i class="fas fa-rocket astronaut-icon"></i> Kelas 8A</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#siswa"><i class="fas fa-users"></i> Siswa kelas 8A</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#jadwal"><i class="fas fa-calendar-alt"></i> Jadwal mapel</a>
+                        </li>
+                    <li class="nav-item">
+    <a class="nav-link" href="#pengurus">
+        <i class="fas fa-user-tie"></i> Pengurus Kelas  
+        
+     <li class="nav-item">
+    <a class="nav-link" href="#sosmed">
+        <i class="fas fa-share-alt"></i> Sosmed
+    </a>
+</li>   
+    </a>
+</li>
+                        
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+            <section id="album" class="mb-5">
+    <h2 class="text-center mb-1">
+    <i class="fas fa-images astronaut-icon"></i> Album Kelas
+</h2>
+
+<p class="text-center text-muted mb-4" style="font-size: 14px;">
+    <i class="fas fa-lock"></i> Hanya admin yang dapat mengunggah foto
+</p>
+
+    <!-- LOGIN ADMIN -->
+    <div id="loginAdmin" class="text-center mb-4">
+        <input type="password" id="adminPassword" class="form-control mb-2"
+               placeholder="Password admin">
+        <button class="btn btn-warning" onclick="loginAdmin()">Login Admin</button>
+    </div>
+
+    <!-- UPLOAD FOTO (ADMIN SAJA) -->
+    <div id="uploadArea" class="text-center mb-4 d-none">
+        <input type="file" id="uploadFoto" accept="image/*" class="form-control mb-2">
+        <button class="btn btn-success" onclick="uploadFoto()">Upload Foto</button>
+    </div>
+
+    <!-- GALERI FOTO -->
+    <div class="row" id="album-list"></div>
+</section>
+            
+            <!-- bagia sosmed-->   
+            <section id="sosmed" class="mb-5 text-center">
+    <h2 class="mb-4">
+        <i class="fas fa-share-alt astronaut-icon"></i> Sosial Media Kelas
+    </h2>
+
+    <a href="https://www.instagram.com/eighth_the_grade_?igsh=bW53ZXIwOWk1d3Q0" target="_blank"
+       class="btn btn-danger btn-lg me-2">
+        <i class="fab fa-instagram"></i> Instagram
+    </a>
+
+    <a href="https://www.tiktok.com/@eight_the_grade?_r=1&_t=ZS-92gWSYlGAiK" target="_blank"
+       class="btn btn-dark btn-lg">
+        <i class="fab fa-tiktok"></i> TikTok
+    </a>
+</section>
+            <!-- halaman pengurus kelas -->
+            
+            <section id="pengurus" class="mb-5">
+    <h2 class="text-center mb-4">
+        <i class="fas fa-user-tie astronaut-icon"></i> Struktur Pengurus Kelas 8A
+        
+   </h2>
+
+    <div class="row" id="pengurus-list">
+    </div>
+        <!-- Data pengurus di-generate oleh JS -->
+</section>
+            
+            <!-- Halaman Siswa -->
+            
+            <section id="siswa" class="mb-5">
+                <h2 class="text-center mb-4"><i class="fas fa-rocket astronaut-icon"></i> struktur kelas 8A</h2>
+                                  <input type="text" id="search" class="form-control" placeholder="Cari nama...">
+                <div class="search-bar">
+                </div>
+                <div class="row" id="siswa-list">
+                    <!-- Data siswa akan di-generate oleh JS -->
+                </div>
+            </section>
+
+            <!-- Halaman Jadwal -->
+            <section id="jadwal" class="mb-5">
+                <h2 class="text-center mb-4"><i class="fas fa-planet-ringed astronaut-icon"></i> Jadwal mapel Harian</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="schedule-day" onclick="toggleSchedule('senin')">
+                            <h5><i class="fas fa-sun"></i> Senin: Upacara + 3 Misi</h5>
+                            <div id="senin" class="hidden">
+                                <ul>
+                                    <li>07:00 - 08:00: Upacara Bendera (Peluncuran)</li>
+                                    <li>08:00 - 09:00: Matematika (Navigasi)</li>
+                                    <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>
+                                    <li>10:00 - 11:00: IPA (Eksplorasi)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="schedule-day" onclick="toggleSchedule('selasa')">
+                            <h5><i class="fas fa-cloud-sun"></i> Selasa: 4 Misi</h5>
+                            <div id="selasa" class="hidden">
+                                <ul>
+                                    <li>08:00 - 09:00: Matematika (Navigasi)</li>
+                                    <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>
+                                    <li>10:00 - 11:00: IPA (Eksplorasi)</li>
+                                    <li>11:00 - 12:00: IPS (Pemetaan)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="schedule-day" onclick="toggleSchedule('rabu')">
+                            <h5><i class="fas fa-cloud"></i> Rabu: 4 Misi</h5>
+                            <div id="rabu" class="hidden">
+                                <ul>
+                                    <li>08:00 - 09:00: Bahasa Inggris (Intergalaksi)</li>
+                                    <li>09:00 - 10:00: Seni Budaya (Kreativitas)</li>
+                                    <li>10:00 - 11:00: PJOK (Latihan Fisik)</li>
+                                    <li>11:00 - 12:00: Agama (Refleksi)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="schedule-day" onclick="toggleSchedule('kamis')">
+                            <h5><i class="fas fa-cloud-rain"></i> Kamis: 5 Misi</h5>
+                            <div id="kamis" class="hidden">
+                                <ul>
+                                    <li>08:00 - 09:00: Matematika (Navigasi)</li>
+                                    <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>
+                                    <li>10:00 - 11:00: IPA (Eksplorasi)</li>
+                                    <li>11:00 - 12:00: IPS (Pemetaan)</li>
+                                    <li>12:00 - 13:00: Bahasa Inggris (Intergalaksi)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="schedule-day" onclick="toggleSchedule('jumat')">
+                            <h5><i class="fas fa-moon"></i> Jumat: 3 Misi</h5>
+                            <div id="jumat" class="hidden">
+                                <ul>
+                                    <li>08:00 - 09:00: Seni Budaya (Kreativitas)</li>
+                                    <li>09:00 - 10:00: PJOK (Latihan Fisik)</li>
+                                    <li>10:00 - 11:00: Agama (Refleksi)</li>
+                                    
+                                    <li class="nav-item">
+    <a class="nav-link" href="#album">
+        <i class="fas fa-images"></i> Album
+    </a>
+</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data siswa dummy lengkap (32 siswa) dengan biodata: nama, absen, hobi, foto, dan tanggal lahir
+const pengurusKelas = [
+    {
+        jabatan: "Wali Kelas",
+        nama: "asmuni",
+        ikon: "fa-chalkboard-teacher"
+    },
+    {
+        jabatan: "Ketua Kelas",
+        nama: "m.rifki",
+        ikon: "fa-crown"
+    },
+    {
+        jabatan: "Wakil Ketua",
+        nama: "m.isra",
+        ikon: "fa-user-check"
+    },
+    {
+        jabatan: "Sekretaris",
+        nama: "azqia ♥",
+        ikon: "fa-pen"
+    },
+    {
+        jabatan: "Bendahara",
+        nama: "ani",
+        ikon: "fa-wallet"
+    },
+    {
+        jabatan: "Seksi Kebersihan",
+        nama: "farel-sekian",
+        ikon: "fa-broom"
+    },
+    {
+        jabatan: "Seksi Keamanan",
+        nama: "dafa-sekian",
+        ikon: "fa-user-shield"
+    }
+];
+        
+        const siswaData = [
+            { nama: "---", absen: 1,  hobi: "---", foto: "https://picsum.photos/200/200?random=1",  tanggalLahir: "----" },
+            { nama: "---", absen: 2,  hobi: "---", foto: "https://picsum.photos/200/200?random=2",  tanggalLahir: "----" },
+            { nama: "---", absen: 3,  hobi: "---", foto: "https://picsum.photos/200/200?random=3",  tanggalLahir: "----" },
+            { nama: "---", absen: 4,  hobi: "---", foto: "https://picsum.photos/200/200?random=4",  tanggalLahir: "----" },
+            { nama: "---", absen: 5,  hobi: "---", foto: "https://picsum.photos/200/200?random=5",  tanggalLahir: "----" },
+            { nama: "---", absen: 6,  hobi: "---", foto: "https://picsum.photos/200/200?random=6",  tanggalLahir: "----" },
+            { nama: "---", absen: 7,  hobi: "---", foto: "https://picsum.photos/200/200?random=7",  tanggalLahir: "----" },
+            { nama: "---", absen: 8,  hobi: "---", foto: "https://picsum.photos/200/200?random=8",  tanggalLahir: "----" },
+            { nama: "---", absen: 9,  hobi: "---", foto: "https://picsum.photos/200/200?random=9",  tanggalLahir: "----" },
+            { nama: "---", absen: 10, hobi: "---", foto: "https://picsum.photos/200/200?random=10", tanggalLahir: "----" },
+            { nama: "---", absen: 11, hobi: "---", foto: "https://picsum.photos/200/200?random=11", tanggalLahir: "----" },
+            { nama: "---", absen: 12, hobi: "---", foto: "https://picsum.photos/200/200?random=12", tanggalLahir: "----" },
+            { nama: "---", absen: 13, hobi: "---", foto: "https://picsum.photos/200/200?random=13", tanggalLahir: "----" },
+            { nama: "---", absen: 14, hobi: "---", foto: "https://picsum.photos/200/200?random=14", tanggalLahir: "----" },
+            { nama: "---", absen: 15, hobi: "---", foto: "https://picsum.photos/200/200?random=15", tanggalLahir: "----" },
+            { nama: "---", absen: 16, hobi: "---", foto: "https://picsum.photos/200/200?random=16", tanggalLahir: "----" },
+            { nama: "---", absen: 17, hobi: "---", foto: "https://picsum.photos/200/200?random=17", tanggalLahir: "----" },
+            { nama: "---", absen: 18, hobi: "---", foto: "https://picsum.photos/200/200?random=18", tanggalLahir: "----" },
+            { nama: "---", absen: 19, hobi: "---", foto: "https://picsum.photos/200/200?random=19", tanggalLahir: "----" },
+            { nama: "---", absen: 20, hobi: "---", foto: "https://picsum.photos/200/200?random=20", tanggalLahir: "----" },
+            { nama: "---", absen: 21, hobi: "---", foto: "https://picsum.photos/200/200?random=21", tanggalLahir: "----" },
+            { nama: "---", absen: 22, hobi: "---", foto: "https://picsum.photos/200/200?random=22", tanggalLahir: "----" },
+            { nama: "---", absen: 23, hobi: "---", foto: "https://picsum.photos/200/200?random=23", tanggalLahir: "----" },
+            { nama: "---", absen: 24, hobi: "---", foto: "https://picsum.photos/200/200?random=24", tanggalLahir: "----" },
+            { nama: "---", absen: 25, hobi: "---", foto: "https://picsum.photos/200/200?random=25", tanggalLahir: "----" },
+            { nama: "---", absen: 26, hobi: "---", foto: "https://picsum.photos/200/200?random=19", tanggalLahir: "----" },
+            { nama: "---", absen: 27, hobi: "---", foto: "https://picsum.photos/200/200?random=20", tanggalLahir: "----" },
+            { nama: "---", absen: 28, hobi: "---", foto: "https://picsum.photos/200/200?random=21", tanggalLahir: "----" },
+            { nama: "---", absen: 29, hobi: "---", foto: "https://picsum.photos/200/200?random=22", tanggalLahir: "----" },
+            { nama: "---", absen: 30, hobi: "---", foto: "https://picsum.photos/200/200?random=23", tanggalLahir: "----" },
+            { nama: "---", absen: 31, hobi: "---", foto: "https://picsum.photos/200/200?random=24", tanggalLahir: "----" },
+            { nama: "---", absen: 32, hobi: "---", foto: "https://picsum.photos/200/200?random=25", tanggalLahir: "----" }
+            
+    
+    ];
+
+        // Generate kartu siswa
+                const pengurusList = document.getElementById("pengurus-list");
+
+pengurusKelas.forEach(p => {
+    const col = document.createElement("div");
+    col.className = "col-md-4 mb-4";
+    col.innerHTML = `
+        <div class="card text-center p-4">
+            <i class="fas ${p.ikon} fa-3x mb-3 text-warning"></i>
+            <h5>${p.jabatan}</h5>
+            <p class="mb-0">${p.nama}</p>
+        </div>
+    `;
+    pengurusList.appendChild(col);
+});
+        
+        const siswaList = document.getElementById('siswa-list');
+        siswaData.forEach(siswa => {
+            const card = document.createElement('div');
+            card.className = 'col-md-4 mb-4';
+            card.innerHTML = `
+                <div class="card">
+                    <img src="${siswa.foto}" class="card-img-top" alt="Foto ${siswa.nama}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">${siswa.nama}</h5>
+                        <p class="card-text">absen: ${siswa.absen}</p>
+                        <p class="card-text">tanga lahir:  ${siswa.tanggal}</p>
+                        <p class="card-text">hobi: ${siswa.hobk}</p>
+                        
+                    </div>
+                </div>
+            `;
+            siswaList.appendChild(card);
+        });
+
+        // Fungsi pencarian siswa
+        document.getElementById('search').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll('#siswa-list .card');
+            cards.forEach(card => {
+                const nama = card.querySelector('.card-title').textContent.toLowerCase();
+                card.style.display = nama.includes(query) ? 'block' : 'none';
+            });
+        });
+        
+        // Fungsi toggle jadwal
+        function toggleSchedule(day) {
+            const element = document.getElementById(day);
+            element.classList.toggle('hidden');
+        }
+        
+        // ===== LOGIN ADMIN =====
+const ADMIN_PASSWORD = "axcell";
+
+function loginAdmin() {
+    const pw = document.getElementById("adminPassword").value;
+    if (pw === ADMIN_PASSWORD) {
+        document.getElementById("loginAdmin").classList.add("d-none");
+        document.getElementById("uploadArea").classList.remove("d-none");
+        localStorage.setItem("isAdmin", "true");
+        alert("Login admin berhasil");
+    } else {
+        alert("Password salah");
+    }
+}
+
+if (localStorage.getItem("isAdmin") === "true") {
+    document.getElementById("loginAdmin").classList.add("d-none");
+    document.getElementById("uploadArea").classList.remove("d-none");
+}
+
+// ===== ALBUM FOTO =====
+const albumList = document.getElementById("album-list");
+let albumFoto = JSON.parse(localStorage.getItem("albumFoto")) || [];
+tampilkanAlbum();
+
+function uploadFoto() {
+    const input = document.getElementById("uploadFoto");
+    const file = input.files[0];
+    if (!file) return alert("Pilih foto dulu!");
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        albumFoto.push(e.target.result);
+        localStorage.setItem("albumFoto", JSON.stringify(albumFoto));
+        tampilkanAlbum();
+        input.value = "";
+    };
+    reader.readAsDataURL(file);
+}
+        function hapusFoto(index) {
+    if (!confirm("Yakin mau hapus foto ini?")) return;
+
+    albumFoto.splice(index, 1);
+    localStorage.setItem("albumFoto", JSON.stringify(albumFoto));
+    tampilkanAlbum();
+}
+
+function tampilkanAlbum() {
+    albumList.innerHTML = "";
+
+    albumFoto.forEach((foto, index) => {
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+        albumList.innerHTML += `
+            <div class="col-md-4 mb-4">
+                <div class="card position-relative">
+                    <img src="${foto}" class="card-img-top">
+
+                    ${isAdmin ? `
+                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
+                            onclick="hapusFoto(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    ` : ""}
+                </div>
+            </div>
+        `;
+    });
+}
+        
+</script>
+</body>
+</html>
