@@ -1136,7 +1136,7 @@ function renderKeuangan() {
     saldo += k.jenis === "masuk" ? k.jumlah : -k.jumlah;
     list.innerHTML += `
       <li>
-        ${k.jenis === "masuk" ? "➕" : "➖"}
+        ${k.jenis === "masuk" ? "+" : "-"}
         ${k.ket} - Rp ${k.jumlah.toLocaleString()}
       </li>
     `;
