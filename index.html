@@ -473,11 +473,6 @@ flex-wrap: wrap;
             <button class="btn btn-warning m-1" onclick="showSection('keuangan')">
   <i class="fas fa-coins"></i> Keuangan
 </button>
-
-            <button class="btn btn-outline-danger w-100 mt-2"
-        onclick="hapusSemuaKeuangan()">
-  🗑️ Hapus Semua Riwayat
-            </button>
             
             <button class="btn btn-danger m-1" onclick="showSection('sosmed')">  
     <i class="fas fa-share-alt"></i> Sosmed  
@@ -1184,13 +1179,6 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 
     
-function hapusSemuaKeuangan() {
-  if (!confirm("Hapus SEMUA riwayat keuangan?")) return;
-
-  keuangan = [];
-  localStorage.removeItem("keuangan");
-  renderKeuangan();
-}
 
 </script>          <!-- MODAL BIODATA -->  <div class="modal fade" id="bioModal" tabindex="-1">  
   <div class="modal-dialog modal-dialog-centered">  
