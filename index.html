@@ -1,418 +1,990 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Kelas - Siswa dan Jadwal</title>
-    <!-- Bootstrap CSS untuk styling menarik -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome untuk ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background: url('fd8ab21ca650e0066c93daa1fed20e6a.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Arial', sans-serif;
-            color: #fff;
-            min-height: 100vh;
-        }
-        .overlay {
-            background: rgba(0, 0, 0, 0.7);
-            min-height: 100vh;
-        }
-        .navbar {
-            background-color: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-        }
-        .card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
-        }
-        .card-img-top {
-            border-radius: 15px 15px 0 0;
-            height: 200px;
-            object-fit: cover;
-        }
-        .card-body {
-            color: #fff;
-        }
-        .table th {
-            background-color: #007bff;
-            color: white;
-        }
-        .search-bar input {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            border-radius: 25px;
-            padding: 10px 20px;
-        }
-        .search-bar input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        .schedule-day {
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            transition: background 0.3s;
-            backdrop-filter: blur(10px);
-        }
-        .schedule-day:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .hidden {
-            display: none;
-        }
-        .astronaut-icon {
-            font-size: 2rem;
-            color: #ffd700;
-        }
-        h2, h5 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-    </style>
-</head>
-<body>
-    <div class="overlay">
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container">
-                <a class="navbar-brand" href="#"><i class="fas fa-rocket astronaut-icon"></i> Kelas 8A</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#siswa"><i class="fas fa-users"></i> Siswa kelas 8A</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#jadwal"><i class="fas fa-calendar-alt"></i> Jadwal mapel</a>
-                        </li>
-                    <li class="nav-item">
-    <a class="nav-link" href="#pengurus">
-        <i class="fas fa-user-tie"></i> Pengurus Kelas  
-        
-     <li class="nav-item">
-    <a class="nav-link" href="#sosmed">
-        <i class="fas fa-share-alt"></i> Sosmed
-    </a>
-</li>   
-    </a>
-</li>
-                        
-                </div>
-            </div>
-        </nav>
-
-        <div class="container mt-5">
-            <section id="album" class="mb-5">
-    <h2 class="text-center mb-1">
-    <i class="fas fa-images astronaut-icon"></i> Album Kelas
-</h2>
-
-<p class="text-center text-muted mb-4" style="font-size: 14px;">
-    <i class="fas fa-lock"></i> Hanya admin yang dapat mengunggah foto
-</p>
-
-    <!-- LOGIN ADMIN -->
-    <div id="loginAdmin" class="text-center mb-4">
-        <input type="password" id="adminPassword" class="form-control mb-2"
-               placeholder="Password admin">
-        <button class="btn btn-warning" onclick="loginAdmin()">Login Admin</button>
-    </div>
-
-    <!-- UPLOAD FOTO (ADMIN SAJA) -->
-    <div id="uploadArea" class="text-center mb-4 d-none">
-        <input type="file" id="uploadFoto" accept="image/*" class="form-control mb-2">
-        <button class="btn btn-success" onclick="uploadFoto()">Upload Foto</button>
-    </div>
-
-    <!-- GALERI FOTO -->
-    <div class="row" id="album-list"></div>
-</section>
-            
-            <!-- bagia sosmed-->   
-            <section id="sosmed" class="mb-5 text-center">
-    <h2 class="mb-4">
-        <i class="fas fa-share-alt astronaut-icon"></i> Sosial Media Kelas
-    </h2>
-
-    <a href="https://www.instagram.com/eighth_the_grade_?igsh=bW53ZXIwOWk1d3Q0" target="_blank"
-       class="btn btn-danger btn-lg me-2">
-        <i class="fab fa-instagram"></i> Instagram
-    </a>
-
-    <a href="https://www.tiktok.com/@eight_the_grade?_r=1&_t=ZS-92gWSYlGAiK" target="_blank"
-       class="btn btn-dark btn-lg">
-        <i class="fab fa-tiktok"></i> TikTok
-    </a>
-</section>
-            <!-- halaman pengurus kelas -->
-            
-            <section id="pengurus" class="mb-5">
-    <h2 class="text-center mb-4">
-        <i class="fas fa-user-tie astronaut-icon"></i> Struktur Pengurus Kelas 8A
-        
-   </h2>
-
-    <div class="row" id="pengurus-list">
-    </div>
-        <!-- Data pengurus di-generate oleh JS -->
-</section>
-            
-            <!-- Halaman Siswa -->
-            
-            <section id="siswa" class="mb-5">
-                <h2 class="text-center mb-4"><i class="fas fa-rocket astronaut-icon"></i> struktur kelas 8A</h2>
-                                  <input type="text" id="search" class="form-control" placeholder="Cari nama...">
-                <div class="search-bar">
-                </div>
-                <div class="row" id="siswa-list">
-                    <!-- Data siswa akan di-generate oleh JS -->
-                </div>
-            </section>
-
-            <!-- Halaman Jadwal -->
-            <section id="jadwal" class="mb-5">
-                <h2 class="text-center mb-4"><i class="fas fa-planet-ringed astronaut-icon"></i> Jadwal mapel Harian</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="schedule-day" onclick="toggleSchedule('senin')">
-                            <h5><i class="fas fa-sun"></i> Senin: Upacara + 3 Misi</h5>
-                            <div id="senin" class="hidden">
-                                <ul>
-                                    <li>07:00 - 08:00: Upacara Bendera (Peluncuran)</li>
-                                    <li>08:00 - 09:00: Matematika (Navigasi)</li>
-                                    <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>
-                                    <li>10:00 - 11:00: IPA (Eksplorasi)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="schedule-day" onclick="toggleSchedule('selasa')">
-                            <h5><i class="fas fa-cloud-sun"></i> Selasa: 4 Misi</h5>
-                            <div id="selasa" class="hidden">
-                                <ul>
-                                    <li>08:00 - 09:00: Matematika (Navigasi)</li>
-                                    <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>
-                                    <li>10:00 - 11:00: IPA (Eksplorasi)</li>
-                                    <li>11:00 - 12:00: IPS (Pemetaan)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="schedule-day" onclick="toggleSchedule('rabu')">
-                            <h5><i class="fas fa-cloud"></i> Rabu: 4 Misi</h5>
-                            <div id="rabu" class="hidden">
-                                <ul>
-                                    <li>08:00 - 09:00: Bahasa Inggris (Intergalaksi)</li>
-                                    <li>09:00 - 10:00: Seni Budaya (Kreativitas)</li>
-                                    <li>10:00 - 11:00: PJOK (Latihan Fisik)</li>
-                                    <li>11:00 - 12:00: Agama (Refleksi)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="schedule-day" onclick="toggleSchedule('kamis')">
-                            <h5><i class="fas fa-cloud-rain"></i> Kamis: 5 Misi</h5>
-                            <div id="kamis" class="hidden">
-                                <ul>
-                                    <li>08:00 - 09:00: Matematika (Navigasi)</li>
-                                    <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>
-                                    <li>10:00 - 11:00: IPA (Eksplorasi)</li>
-                                    <li>11:00 - 12:00: IPS (Pemetaan)</li>
-                                    <li>12:00 - 13:00: Bahasa Inggris (Intergalaksi)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="schedule-day" onclick="toggleSchedule('jumat')">
-                            <h5><i class="fas fa-moon"></i> Jumat: 3 Misi</h5>
-                            <div id="jumat" class="hidden">
-                                <ul>
-                                    <li>08:00 - 09:00: Seni Budaya (Kreativitas)</li>
-                                    <li>09:00 - 10:00: PJOK (Latihan Fisik)</li>
-                                    <li>10:00 - 11:00: Agama (Refleksi)</li>
-                                    
-                                    <li class="nav-item">
-    <a class="nav-link" href="#album">
-        <i class="fas fa-images"></i> Album
-    </a>
-</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Data siswa dummy lengkap (32 siswa) dengan biodata: nama, absen, hobi, foto, dan tanggal lahir
-const pengurusKelas = [
-    {
-        jabatan: "Wali Kelas",
-        nama: "latifah zahra",
-        ikon: "fa-chalkboard-teacher"
-    },
-    {
-        jabatan: "Ketua Kelas",
-        nama: "m.rifki",
-        ikon: "fa-crown"
-    },
-    {
-        jabatan: "Wakil Ketua",
-        nama: "m.isra",
-        ikon: "fa-user-check"
-    },
-    {
-        jabatan: "Sekretaris",
-        nama: "azqia ♥",
-        ikon: "fa-pen"
-    },
-    {
-        jabatan: "Bendahara",
-        nama: "ani",
-        ikon: "fa-wallet"
-    },
-    {
-        jabatan: "Seksi Kebersihan",
-        nama: "farel-sekian",
-        ikon: "fa-broom"
-    },
-    {
-        jabatan: "Seksi Keamanan",
-        nama: "dafa-sekian",
-        ikon: "fa-user-shield"
+<!DOCTYPE html>  <htmlg="id">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Website Kelas - Siswa dan Jadwal</title>  
+    <!-- Bootstrap CSS untuk styling menarik -->  
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+    <!-- Font Awesome untuk ikon -->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">  
+    <style>  
+        body {  
+            background: url('fd8ab21ca650e0066c93daa1fed20e6a.jpg') no-repeat center center fixed;  
+            background-size: cover;  
+            font-family: 'Arial', sans-serif;  
+            color: #fff;  
+            min-height: 100vh;  
+        }  
+        .overlay {  
+            background: rgba(0, 0, 0, 0.7);  
+            min-height: 100vh;  
+        }  
+        .navbar {  
+            background-color: rgba(0, 0, 0, 0.8);  
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);  
+        }  
+        .card {  
+            background: rgba(255, 255, 255, 0.1);  
+            border: 1px solid rgba(255, 255, 255, 0.2);  
+            border-radius: 15px;  
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);  
+            transition: transform 0.3s, box-shadow 0.3s;  
+            backdrop-filter: blur(10px);  
+            overflow: hidden;  
+        }  
+        .card:hover {  
+            transform: translateY(-10px) scale(1.05);  
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);  
+        }  
+        .card-img-top {  
+            border-radius: 15px 15px 0 0;  
+            height: 200px;  
+            object-fit: cover;  
+        }  
+        .card-body {  
+            color: #fff;  
+        }  
+        .table th {  
+            background-color: #007bff;  
+            color: white;  
+        }  
+        .search-bar input {  
+            background: rgba(255, 255, 255, 0.2);  
+            border: 1px solid rgba(255, 255, 255, 0.3);  
+            color: #fff;  
+            border-radius: 25px;  
+            padding: 10px 20px;  
+        }  
+        .search-bar input::placeholder {  
+            color: rgba(255, 255, 255, 0.7);  
+        }  
+        .schedule-day {  
+            cursor: pointer;  
+            background: rgba(255, 255, 255, 0.1);  
+            border: 1px solid rgba(255, 255, 255, 0.2);  
+            border-radius: 15px;  
+            padding: 15px;  
+            margin-bottom: 15px;  
+            transition: background 0.3s;  
+            backdrop-filter: blur(10px);  
+        }  
+        .schedule-day:hover {  
+            background: rgba(255, 255, 255, 0.2);  
+        }  
+        .hidden {  
+            display: none;  
+        }  
+        .astronaut-icon {  
+            font-size: 2rem;  
+            color: #ffd700;  
+        }  
+        h2, h5 {  
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);  
+        }  
+       .page-section {  
+            display: none;  
+        }  
+        .page-section.active {  
+            display: block;  
+        }  .overlay {  
+        position: relative;  
+        z-index: 1;  
     }
-];
-        
-        const siswaData = [
-            { nama: "Farel Nugraha", absen: 1,  hobi: "males-malesan", foto: "file_000000007f00720baf1674e8f8876d19.png",  tanggalLahir: "14/11/11" },
-            { nama: "---", absen: 2,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 3,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 4,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 5,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 6,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "Muhamad Isra", absen: 7,  hobi: "bola", foto: "isra.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 8,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 9,  hobi: "---", foto: "lowgin.jpg",  tanggalLahir: "----" },
-            { nama: "---", absen: 10, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 11, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 12, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 13, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 14, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "Muhamad Rifki", absen: 15, hobi: "mengaji", foto: "rifki.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 16, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 17, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 18, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 19, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 20, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 21, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 22, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 23, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 24, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 25, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 26, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 27, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 28, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 29, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 30, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 31, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" },
-            { nama: "---", absen: 32, hobi: "---", foto: "lowgin.jpg", tanggalLahir: "----" }
+
+button {
+pointer-events: auto;
+}
+
+/* TABEL PIKET */
+
+#piket table {
+background: rgba(255, 255, 255, 0.08);
+border-radius: 15px;
+overflow: hidden;
+}
+
+#piket thead {
+background: rgba(0, 0, 0, 0.4);
+}
+
+#piket th {
+font-weight: 600;
+font-size: 14px;
+}
+
+#piket td {
+font-size: 13px;
+padding: 10px;
+}
+
+#piket tbody tr {
+transition: all 0.25s ease;
+}
+
+#piket tbody tr:hover {
+background: rgba(255, 255, 255, 0.15);
+transform: scale(1.01);
+}
+
+.piket-chip {  
+display: inline-block;  
+background: rgba(255,255,255,0.2);  
+padding: 5px 10px;  
+border-radius: 20px;  
+font-size: 12px;
+
+}
+
+#piket tbody tr:nth-child(even) {  
+background: rgba(255,255,255,0.05);
+
+}
+#piket li {
+padding: 6px 0;
+border-bottom: 1px dashed rgba(255,255,255,0.2);
+}
+#piket li:last-child {
+border-bottom: none;
+}
+
+.schedule-wrapper {  
+overflow-x: auto;
+
+}
+
+.schedule-table {
+width: 100%;
+border-collapse: separate;
+border-spacing: 8px;
+}
+
+.schedule-table th,
+.schedule-table td {
+background: rgba(255,255,255,0.1);
+padding: 12px;
+text-align: center;
+border-radius: 12px;
+font-size: 13px;
+transition: 0.3s;
+}
+
+.schedule-table th {
+background: rgba(0,0,0,0.4);
+font-weight: 600;
+}
+
+.schedule-table td:hover {
+background: rgba(255,255,255,0.2);
+transform: scale(1.03);
+}
+
+.pengurus-card {  
+background: rgba(255,255,255,0.1);  
+border-radius: 20px;  
+padding: 25px 15px;  
+position: relative;  
+box-shadow: 0 10px 30px rgba(0,0,0,0.3);  
+transition: 0.3s;
+
+}
+
+.pengurus-card:hover {
+transform: translateY(-8px);
+}
+
+.foto-pengurus {
+width: 120px;
+height: 120px;
+object-fit: cover;
+border-radius: 50%;
+border: 4px solid rgba(255,255,255,0.4);
+}
+
+.logo-pengurus {
+width: 40px;
+height: 40px;
+background: rgba(0,0,0,0.6);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+position: absolute;
+top: 90px;
+right: 30px;
+color: #ffd700;
+}
+
+.jabatan {
+font-size: 14px;
+opacity: 0.8;
+}
+
+.org-chart {  
+display: flex;  
+flex-direction: column;  
+align-items: center;
+
+}
+
+.level {
+display: flex;
+justify-content: center;
+gap: 30px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+
+.line {
+width: 3px;
+height: 30px;
+background: rgba(255,255,255,0.5);
+margin-bottom: 20px;
+}
+
+.org-card {
+background: rgba(255,255,255,0.12);
+border-radius: 18px;
+padding: 20px 15px;
+text-align: center;
+width: 180px;
+position: relative;
+box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+transition: 0.3s;
+}
+
+.org-card:hover {
+transform: translateY(-8px);
+}
+
+.org-card img {
+width: 90px;
+height: 90px;
+object-fit: cover;
+border-radius: 50%;
+border: 3px solid rgba(255,255,255,0.5);
+}
+
+.org-card i {
+position: absolute;
+top: 70px;
+right: 20px;
+background: rgba(0,0,0,0.6);
+width: 36px;
+height: 36px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: gold;
+}
+
+.org-card h5 {
+margin-top: 15px;
+font-size: 15px;
+}
+
+.org-card span {
+font-size: 13px;
+opacity: 0.8;
+}
+
+.org-card.wali {  
+border: 2px solid gold;
+
+}
+
+@media (max-width: 576px) {  
+.card {  
+    margin-left: 10px;  
+    margin-right: 10px;  
+}
+
+}
+
+/* FOTO SISWA POTRET */
+
+.siswa-img {
+width: 100%;
+height: 260px;          /* tinggi potret /
+object-fit: cover;     / biar nggak gepeng /
+object-position: top;  / fokus ke wajah */
+border-radius: 15px 15px 0 0;
+}
+
+@media (max-width: 576px) {  
+.siswa-img {  
+    height: 220px;  
+}
+
+}
+
+/* KHUSUS WALI BIAR NGGAK KE-POTRET */
+
+.card.border-warning img {
+height: auto;
+object-fit: contain;
+}
+
+/* CARD WALI - VERSION MINI */
+
+.card.wali-mini img {
+height: 260px;
+object-fit: cover;
+object-position: center;
+}
+
+.bio-card {  
+border-radius: 20px;
+
+}
+
+.bio-foto {
+width: 120px;
+height: 160px;
+object-fit: cover;
+border-radius: 15px;
+}
+
+.jabatan-icon {
+font-size: 30px;
+margin: 5px;
+}
+
+.bio-card {  
+background: rgba(255, 255, 255, 0.15);  
+backdrop-filter: blur(10px);  
+color: white;  
+border-radius: 20px;  
+border: 1px solid rgba(255,255,255,0.3);
+
+}
+.bio-card p,
+.bio-card h5 {
+margin-bottom: 6px;
+}
+
+.clickable-card {  
+cursor: pointer;
+
+}
+
+.clickable-card::after {
+content: "Klik untuk lihat biodata";
+position: absolute;
+bottom: 10px;
+left: 50%;
+transform: translateX(-50%);
+font-size: 11px;
+background: rgba(0,0,0,0.6);
+padding: 4px 10px;
+border-radius: 20px;
+opacity: 0;
+transition: 0.3s;
+}
+
+.clickable-card:hover::after {
+opacity: 1;
+}
+
+.jabatan-icon {  
+font-size: 28px;  
+margin: 6px;
+
+}
+
+.jabatan-osis {
+width: 30px;
+height: 30px;
+object-fit: contain;
+margin: 6px;
+vertical-align: middle;
+}
+
+#bioJabatan {  
+display: flex;  
+justify-content: center;  
+align-items: center;  
+gap: 4px;  
+flex-wrap: wrap;
+
+}
+
+</style>
+
+</head>  
+<body>  
+    <div class="overlay">  
+        <!-- Navbar -->  
+        <nav class="navbar navbar-expand-lg navbar-dark">  
+            <div class="container">  
+                <a class="navbar-brand" href="#"><i class="fas fa-rocket astronaut-icon"></i> Kelas 8A</a>  
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">  
+                    <span class="navbar-toggler-icon"></span>  
+                </button>  
+                <div class="collapse navbar-collapse" id="navbarNav">  
+                    <ul class="navbar-nav ms-auto">  
+                        <li class="nav-item">
+  <a class="nav-link" href="#keuangan">
+    <i class="fas fa-coins"></i> Keuangan
+  </a>
+</li>
+                                                            <li class="nav-item">  
+    <a class="nav-link" href="#album">  
+        <i class="fas fa-images"></i> Album  
+    </a>  
+</li>  <li class="nav-item">  
+                        <a class="nav-link active" href="#siswa"><i class="fas fa-users"></i> Siswa kelas 8A</a>  
+                    </li>  
+                      
+                    <li class="nav-item">  
+                        <a class="nav-link" href="#jadwal"><i class="fas fa-calendar-alt"></i> Jadwal mapel</a>  
+                    </li>  
+                <li class="nav-item">  
+<a class="nav-link" href="#pengurus">  
+    <i class="fas fa-user-tie"></i> Pengurus Kelas</a>
+
+  </li>                          <li class="nav-item">  
+<a class="nav-link" href="#sosmed">  
+    <i class="fas fa-share-alt"></i> Sosmed</a>
+
+</li>                       
+                </div>  
+        </nav>  <div class="container text-center mt-4">  
+              
+            <button class="btn btn-info m-1" onclick="showSection('album')">  
+    <i class="fas fa-images"></i> Album  
+</button>  
+
+<button class="btn btn-warning m-1" onclick="showSection('pengurus')">  
+    <i class="fas fa-user-tie"></i> Pengurus  
+</button>  
+              
+<button class="btn btn-primary m-1" onclick="showSection('siswa')">  
+    <i class="fas fa-users"></i> Struktur  
+</button>  
+
+<button class="btn btn-success m-1" onclick="showSection('jadwal')">  
+    <i class="fas fa-calendar"></i> Mapel  
+</button>  
+
+            <button class="btn btn-secondary m-1" onclick="showSection('piket')">  
+<i class="fas fa-broom"></i> Piket
+ </button>
+            <button class="btn btn-warning m-1" onclick="showSection('keuangan')">
+  <i class="fas fa-coins"></i> Keuangan
+</button>
             
-    
-    ];
+            <button class="btn btn-danger m-1" onclick="showSection('sosmed')">  
+    <i class="fas fa-share-alt"></i> Sosmed  
+</button>
 
-        // Generate kartu siswa
-                const pengurusList = document.getElementById("pengurus-list");
+          </div> 
+                <div class="container mt-5">  
+                    <section id="keuangan" class="page-section mb-5">
+  <h2 class="text-center mb-4">
+    <i class="fas fa-coins astronaut-icon"></i> Keuangan & Administrasi Kelas
+  </h2>
 
-pengurusKelas.forEach(p => {
-    const col = document.createElement("div");
-    col.className = "col-md-4 mb-4";
-    col.innerHTML = `
-        <div class="card text-center p-4">
-            <i class="fas ${p.ikon} fa-3x mb-3 text-warning"></i>
-            <h5>${p.jabatan}</h5>
-            <p class="mb-0">${p.nama}</p>
+  <div class="row g-4">
+
+    <!-- BENDAHARA -->
+    <div class="col-md-6">
+      <div class="card p-4">
+        <h5 class="text-warning">
+          <i class="fas fa-wallet"></i> Bendahara Kelas
+        </h5>
+
+        <p>💰 Saldo Kas: <strong id="saldoKas">Rp 0</strong></p>
+
+        <ul id="listKeuangan"></ul>
+
+        <!-- ADMIN ONLY -->
+        <div id="formKeuangan" class="mt-3 d-none">
+          <input type="text" id="ketKeuangan" class="form-control mb-2" placeholder="Keterangan">
+          <input type="number" id="jumlahKeuangan" class="form-control mb-2" placeholder="Jumlah">
+          <select id="jenisKeuangan" class="form-control mb-2">
+            <option value="masuk">Pemasukan</option>
+            <option value="keluar">Pengeluaran</option>
+          </select>
+          <button class="btn btn-success w-100" onclick="tambahKeuangan()">Tambah</button>
         </div>
-    `;
-    pengurusList.appendChild(col);
-});
-        
-        const siswaList = document.getElementById('siswa-list');
-        siswaData.forEach(siswa => {
-            const card = document.createElement('div');
-            card.className = 'col-md-4 mb-4';
-            card.innerHTML = `
-                <div class="card">
-                    <img src="${siswa.foto}" class="card-img-top" alt="Foto ${siswa.nama}">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">${siswa.nama}</h5>
-                        <p class="card-text">absen: ${siswa.absen}</p>
-                        <p class="card-text">tangal lahir:${siswa.tanggalLahir}</p>
-                        <p class="card-text">hobi: ${siswa.hobi}</p>
-                        
-                    </div>
-                </div>
-            `;
-            siswaList.appendChild(card);
-        });
+      </div>
+    </div>
 
-        // Fungsi pencarian siswa
-        document.getElementById('search').addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            const cards = document.querySelectorAll('#siswa-list .card');
-            cards.forEach(card => {
-                const nama = card.querySelector('.card-title').textContent.toLowerCase();
-                card.style.display = nama.includes(query) ? 'block' : 'none';
-            });
-        });
-        
-        // Fungsi toggle jadwal
-        function toggleSchedule(day) {
-            const element = document.getElementById(day);
-            element.classList.toggle('hidden');
-        }
-        
-        // ===== LOGIN ADMIN =====
+    <!-- SEKRETARIS -->
+    <div class="col-md-6">
+      <div class="card p-4">
+        <h5 class="text-info">
+          <i class="fas fa-pen-nib"></i> Sekretaris Kelas
+        </h5>
+
+        <ul id="catatanKelas"></ul>
+
+        <!-- ADMIN ONLY -->
+        <div id="formCatatan" class="mt-3 d-none">
+          <textarea id="isiCatatan" class="form-control mb-2" placeholder="Catatan / Agenda"></textarea>
+          <button class="btn btn-primary w-100" onclick="tambahCatatan()">Tambah Catatan</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+    
+        <section id="album" class="page-section mb-5">  
+<h2 class="text-center mb-1">  
+<i class="fas fa-images astronaut-icon"></i> Album Kelas
+
+</h2>  <p class="text-center text-muted mb-4" style="font-size: 14px;">  
+    <i class="fas fa-lock"></i> Hanya admin yang dapat mengunggah foto  
+</p>  <!-- LOGIN ADMIN -->  
+<div id="loginAdmin" class="text-center mb-4">  
+    <input type="password" id="adminPassword" class="form-control mb-2"  
+           placeholder="Password admin">  
+    <button class="btn btn-warning" onclick="loginAdmin()">Login Admin</button>  
+</div>  
+
+<!-- UPLOAD FOTO (ADMIN SAJA) -->  
+<div id="uploadArea" class="text-center mb-4 d-none">  
+    <input type="file" id="uploadFoto" accept="image/*" class="form-control mb-2">  
+    <button class="btn btn-success" onclick="uploadFoto()">Upload Foto</button>  
+</div>  
+
+<!-- GALERI FOTO -->  
+<div class="row" id="album-list"></div>
+
+</section> 
+                    <!-- bagia sosmed-->     
+      <section id="sosmed" class="page-section mb-5">
+  <h2 class="text-center mb-5">
+    <i class="fas fa-share-alt astronaut-icon"></i> Sosial Media Kelas 8A
+  </h2>
+
+  <div class="row justify-content-center g-4">
+
+      <div class="alert alert-info text-center mt-4">
+  Jangan lupa follow & support kelas kita 🚀
+</div>
+      
+    <div class="col-md-4">
+      <div class="card text-center p-4">
+        <i class="fab fa-instagram fa-3x text-danger mb-3"></i>
+        <h5>Instagram Kelas</h5>
+        <p class="text-muted">Info, dokumentasi, dan keseruan kelas</p>
+        <a href="https://www.instagram.com/eighth_the_grade_?igsh=bW53ZXIwOWk1d3Q0"
+           target="_blank" class="btn btn-danger w-100">
+          Kunjungi Instagram
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-center p-4">
+        <i class="fab fa-tiktok fa-3x text-light mb-3"></i>
+        <h5>TikTok Kelas</h5>
+        <p class="text-muted">Video lucu, trend, dan moment kelas</p>
+        <a href="https://www.tiktok.com/@eight_the_grade?_r=1&_t=ZS-92gWSYlGAiK"
+           target="_blank" class="btn btn-dark w-100">
+          Kunjungi TikTok
+        </a>
+      </div>
+        <div class="text-center mt-4">
+  <p class="mb-1">📢 Admin Sosial Media:</p>
+  <strong>Instagram=> Nama | Tiktok=> Nama</strong>
+</div>
+    </div>
+
+  </div>
+</section>
+            <!-- halaman pengurus kelas -->  
+           <section id="pengurus" class="page-section mb-5">  
+    <h2 class="text-center mb-5">  
+        <i class="fas fa-sitemap astronaut-icon"></i> Struktur Pengurus Kelas  
+    </h2>  <div class="org-chart">  
+
+    <!-- WALI -->  
+    <div class="level">  
+        <div class="org-card wali">  
+            <img src="jokowi.png">  
+            <i class="fas fa-chalkboard-teacher"></i>  
+            <h5>Nama Wali</h5>  
+            <span>Wali Kelas</span>  
+        </div>  
+    </div>  
+
+    <!-- KETUA & WAKIL -->  
+    <div class="line"></div>  
+    <div class="level">  
+        <div class="org-card">  
+            <img src="wowo.png">  
+            <i class="fas fa-crown"></i>  
+            <h5>Nama Ketua</h5>  
+            <span>Ketua</span>  
+        </div>  
+
+        <div class="org-card">  
+            <img src="giman.png">  
+            <i class="fas fa-user-shield"></i>  
+            <h5>Nama Wakil</h5>  
+            <span>Wakil</span>  
+        </div>  
+    </div>  
+
+    <!-- SEKRETARIS & BENDAHARA -->  
+    <div class="line"></div>  
+    <div class="level">  
+        <div class="org-card">  
+            <img src="smi.png">  
+            <i class="fas fa-pen-nib"></i>  
+            <h5>Sekretaris</h5>  
+            <span>Sekretaris</span>  
+        </div>  
+
+        <div class="org-card">  
+            <img src="PYS.png">  
+            <i class="fas fa-wallet"></i>  
+       <h5>Bendahara</h5>  
+            <span>Bendahara</span>  
+        </div>  
+    </div>  
+
+    <!-- KEBERSIHAN -->  
+    <div class="line"></div>  
+    <div class="level">  
+        <div class="org-card">  
+            <img src="bahlul.png">  
+            <i class="fas fa-broom"></i>  
+            <h5>Kebersihan 1</h5>  
+            <span>Kebersihan</span>  
+        </div>  
+
+        <div class="org-card">  
+            <img src="bahlul.png">  
+            <i class="fas fa-broom"></i>  
+            <h5>Kebersihan 2</h5>  
+            <span>Kebersihan</span>  
+        </div>  
+
+        <div class="org-card">  
+            <img src="bahlul.png">  
+            <i class="fas fa-broom"></i>  
+            <h5>Kebersihan 3</h5>  
+            <span>Kebersihan</span>  
+        </div>  
+    </div>  
+
+    <!-- KEAMANAN -->  
+    <div class="line"></div>  
+    <div class="level">  
+        <div class="org-card">  
+            <img src="bahlul.png">  
+            <i class="fas fa-shield-alt"></i>  
+            <h5>Keamanan 1</h5>  
+            <span>Keamanan</span>  
+        </div>  
+
+        <div class="org-card">  
+            <img src="bahlul.png">  
+            <i class="fas fa-shield-alt"></i>  
+            <h5>Keamanan 2</h5>  
+            <span>Keamanan</span>  
+        </div>  
+
+        <div class="org-card">  
+            <img src="bahlul.png">  
+            <i class="fas fa-shield-alt"></i>  
+            <h5>Keamanan 3</h5>  
+            <span>Keamanan</span>  
+        </div>  
+    </div>  
+
+</div>
+
+</section>  
+              <!-- Halaman piket -->  
+            <section id="piket" class="page-section mb-5">  
+    <h2 class="text-center mb-4">  
+        <i class="fas fa-broom astronaut-icon"></i> Jadwal Piket  
+    </h2>  <div class="schedule-wrapper">  
+    <table class="schedule-table">  
+        <thead>  
+            <tr>  
+                <th>Hari</th>  
+                <th colspan="6">Anggota</th>  
+            </tr>  
+        </thead>  
+        <tbody id="piket-body">  
+            <!-- diisi JS -->  
+        </tbody>  
+    </table>  
+</div>
+
+</section>  <!-- Halaman Siswa -->  
+          
+        <section id="siswa" class="page-section mb-5">  
+            <h2 class="text-center mb-4"><i class="fas fa-rocket astronaut-icon"></i> struktur kelas 8A</h2>  
+                             <input type="text" id="search" class="form-control mb-4" placeholder="Cari nama...">  
+            <div class="search-bar">  
+            </div>
+
+<!-- KARTU WALI KELAS -->  <div class="row mb-4">  
+    <div class="col-12 col-md-4 offset-md-4">  
+        <div class="card border-warning wali-mini">  
+            <img src="jokowi.png" class="card-img-top" alt="Wali Kelas">  
+            <div class="card-body text-center">  
+                <h5 class="card-title">  
+                    <i class="fas fa-chalkboard-teacher text-warning"></i>  
+                    Nama Wali Kelas  
+                </h5>  
+                <p class="card-text">Wali Kelas 8A</p>  
+            </div>  
+        </div>  
+    </div>  
+</div>  <!-- LIST SISWA -->  <div class="row" id="siswa-list">  
+    <!-- Data siswa dari JS -->  </div>  
+            </section>  <!-- Halaman Jadwal -->  
+        <section id="jadwal" class="page-section mb-5">  
+            <h2 class="text-center mb-4"><i class="fas fa-planet-ringed astronaut-icon"></i> Jadwal mapel Harian</h2>  
+            <div class="row">  
+                <div class="col-md-6">  
+                    <div class="schedule-day" onclick="toggleSchedule('senin')">  
+                        <h5><i class="fas fa-sun"></i> Senin: Upacara + 3 Misi</h5>  
+                        <div id="senin" class="hidden">  
+                            <ul>  
+                                <li>07:00 - 08:00: Upacara Bendera (Peluncuran)</li>  
+                                <li>08:00 - 09:00: Matematika (Navigasi)</li>  
+                                <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>  
+                                <li>10:00 - 11:00: IPA (Eksplorasi)</li>  
+                            </ul>  
+                        </div>  
+                    </div>  
+                </div>  
+                <div class="col-md-6">  
+                    <div class="schedule-day" onclick="toggleSchedule('selasa')">  
+                        <h5><i class="fas fa-cloud-sun"></i> Selasa: 4 Misi</h5>  
+                        <div id="selasa" class="hidden">  
+                            <ul>  
+                                <li>08:00 - 09:00: Matematika (Navigasi)</li>  
+                                <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>  
+                                <li>10:00 - 11:00: IPA (Eksplorasi)</li>  
+                                <li>11:00 - 12:00: IPS (Pemetaan)</li>  
+                            </ul>  
+                        </div>  
+                    </div>  
+                </div>  
+                <div class="col-md-6">  
+                    <div class="schedule-day" onclick="toggleSchedule('rabu')">  
+                        <h5><i class="fas fa-cloud"></i> Rabu: 4 Misi</h5>  
+                        <div id="rabu" class="hidden">  
+                            <ul>  
+                                <li>08:00 - 09:00: Bahasa Inggris (Intergalaksi)</li>  
+                                <li>09:00 - 10:00: Seni Budaya (Kreativitas)</li>  
+                                <li>10:00 - 11:00: PJOK (Latihan Fisik)</li>  
+                                <li>11:00 - 12:00: Agama (Refleksi)</li>  
+                            </ul>  
+                        </div>  
+                    </div>  
+                </div>  
+                <div class="col-md-6">  
+                    <div class="schedule-day" onclick="toggleSchedule('kamis')">  
+                        <h5><i class="fas fa-cloud-rain"></i> Kamis: 5 Misi</h5>  
+                        <div id="kamis" class="hidden">  
+                            <ul>  
+                                <li>08:00 - 09:00: Matematika (Navigasi)</li>  
+                                <li>09:00 - 10:00: Bahasa Indonesia (Komunikasi)</li>  
+                                <li>10:00 - 11:00: IPA (Eksplorasi)</li>  
+                                <li>11:00 - 12:00: IPS (Pemetaan)</li>  
+                                <li>12:00 - 13:00: Bahasa Inggris (Intergalaksi)</li>  
+                            </ul>  
+                        </div>  
+                    </div>  
+                </div>  
+                <div class="col-md-6">  
+                    <div class="schedule-day" onclick="toggleSchedule('jumat')">  
+                        <h5><i class="fas fa-moon"></i> Jumat: 3 Misi</h5>  
+                        <div id="jumat" class="hidden">  
+                            <ul>  
+                                <li>08:00 - 09:00: Seni Budaya (Kreativitas)</li>  
+                                <li>09:00 - 10:00: PJOK (Latihan Fisik)</li>  
+                                <li>10:00 - 11:00: Agama (Refleksi)</li>  
+                                  
+
+                            </ul>  
+                        </div>  
+                    </div>  
+                </div>  
+            </div>  
+        </section>  
+    </div>  
+</div>  
+
+<!-- Bootstrap JS -->  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>  
+<script>  
+    // Data siswa dummy lengkap (32 siswa) dengan biodata: nama, absen, hobi, foto, dan tanggal lahir  
+
+    const siswaData = [
+
+{
+nama: "Andi",
+absen: 1,
+umur: 14,
+lahir: "12-05-2011",
+gender: "L",
+jabatan: ["siswa", "ketua", "osis"],
+tinggal: "Jl. Mawar No. 12",
+foto: "lowgin.jpg"
+},
+{
+nama: "Siti",
+absen: 2,
+umur: 13,
+lahir: "21-08-2011",
+gender: "P",
+jabatan: ["siswa", "bendahara", "osis"],
+tinggal: "Jl. Melati No. 5",
+foto: "lowgin.jpg"
+},
+{
+nama: "Budi",
+absen: 3,
+umur: 14,
+lahir: "03-03-2011",
+gender: "L",
+jabatan: ["siswa", "wakil", "keamanan"],
+tinggal: "Jl. Kenanga No. 7",
+foto: "lowgin.jpg"
+},
+{
+nama: "Rina",
+absen: 4,
+umur: 13,
+lahir: "17-09-2011",
+gender: "P",
+jabatan: ["siswa", "sekretaris", "osis"],
+tinggal: "Jl. Anggrek No. 2",
+foto: "lowgin.jpg"
+},
+{
+nama: "Doni",
+absen: 5,
+umur: 14,
+lahir: "28-01-2011",
+gender: "L",
+jabatan: ["siswa", "keamanan", "kebersihan"],
+tinggal: "Jl. Flamboyan No. 9",
+foto: "lowgin.jpg"
+},
+{
+nama: "Alya",
+absen: 6,
+umur: 13,
+lahir: "10-10-2011",
+gender: "P",
+jabatan: ["siswa", "osis", "kebersihan"],
+tinggal: "Jl. Cempaka No. 4",
+foto: "lowgin.jpg"
+},
+{
+nama: "Fajar",
+absen: 7,
+umur: 14,
+lahir: "06-06-2011",
+gender: "L",
+jabatan: ["siswa", "keamanan", "osis"],
+tinggal: "Jl. Dahlia No. 6",
+foto: "lowgin.jpg"
+},
+{
+nama: "Nisa",
+absen: 8,
+umur: 13,
+lahir: "19-12-2011",
+gender: "P",
+jabatan: ["siswa", "kebersihan", "sekretaris"],
+tinggal: "Jl. Teratai No. 11",
+foto: "lowgin.jpg"
+},
+{
+nama: "Rizky",
+absen: 9,
+umur: 14,
+lahir: "14-04-2011",
+gender: "L",
+jabatan: ["siswa", "wakil", "osis"],
+tinggal: "Jl. Mawar No. 20",
+foto: "lowgin.jpg"
+},
+{
+nama: "Putri",
+absen: 10,
+umur: 13,
+lahir: "30-07-2011",
+gender: "P",
+jabatan: ["siswa", "bendahara", "kebersihan"],
+tinggal: "Jl. Melur No. 3",
+foto: "lowgin.jpg"
+}
+];
+
+// Generate kartu siswa  
+              
+    const siswaList = document.getElementById('siswa-list');  
+    siswaData.forEach(siswa => {  
+        const card = document.createElement('div');  
+        card.className = 'col-md-4 mb-4';  
+        card.innerHTML = `  
+    <div class="card clickable-card position-relative"  
+         onclick='bukaBiodata(${JSON.stringify(siswa)})'>  
+        <img src="${siswa.foto}" class="siswa-img" alt="Foto ${siswa.nama}">  
+        <div class="card-body text-center">  
+            <h5 class="card-title">${siswa.nama}</h5>  
+            <p class="card-text">Absen: ${siswa.absen}</p>  
+            <div class="mt-2 text-warning" style="font-size:12px">  
+                <i class="fas fa-hand-pointer"></i> Klik detail  
+            </div>  
+        </div>  
+    </div>  
+`;  
+siswaList.appendChild(card);
+
+});
+
+// Fungsi pencarian siswa  
+    document.getElementById('search').addEventListener('input', function() {  
+        const query = this.value.toLowerCase();  
+        const cards = document.querySelectorAll('#siswa-list .card');  
+        cards.forEach(card => {  
+            const nama = card.querySelector('.card-title').textContent.toLowerCase();  
+            card.style.display = nama.includes(query) ? 'block' : 'none';  
+        });  
+    });  
+      
+    // Fungsi toggle jadwal  
+    function toggleSchedule(day) {  
+        const element = document.getElementById(day);  
+        element.classList.toggle('hidden');  
+    }  
+      
+    // ===== LOGIN ADMIN =====
+
 const ADMIN_PASSWORD = "smp kembangan";
 
 function loginAdmin() {
-    const pw = document.getElementById("adminPassword").value;
-    if (pw === ADMIN_PASSWORD) {
-        document.getElementById("loginAdmin").classList.add("d-none");
-        document.getElementById("uploadArea").classList.remove("d-none");
-        localStorage.setItem("isAdmin", "true");
-        alert("Login admin berhasil");
-    } else {
-        alert("Password salah");
-    }
+const pw = document.getElementById("adminPassword").value;
+if (pw === ADMIN_PASSWORD) {
+document.getElementById("loginAdmin").classList.add("d-none");
+document.getElementById("uploadArea").classList.remove("d-none");
+localStorage.setItem("isAdmin", "true");
+alert("Login admin berhasil");
+} else {
+alert("Password salah");
+}
 }
 
 if (localStorage.getItem("isAdmin") === "true") {
-    document.getElementById("loginAdmin").classList.add("d-none");
-    document.getElementById("uploadArea").classList.remove("d-none");
+document.getElementById("loginAdmin").classList.add("d-none");
+document.getElementById("uploadArea").classList.remove("d-none");
 }
 
 // ===== ALBUM FOTO =====
@@ -421,50 +993,208 @@ let albumFoto = JSON.parse(localStorage.getItem("albumFoto")) || [];
 tampilkanAlbum();
 
 function uploadFoto() {
-    const input = document.getElementById("uploadFoto");
-    const file = input.files[0];
-    if (!file) return alert("Pilih foto dulu!");
+const input = document.getElementById("uploadFoto");
+const file = input.files[0];
+if (!file) return alert("Pilih foto dulu!");
 
-    const reader = new FileReader();
-    reader.onload = e => {
-        albumFoto.push(e.target.result);
-        localStorage.setItem("albumFoto", JSON.stringify(albumFoto));
-        tampilkanAlbum();
-        input.value = "";
-    };
-    reader.readAsDataURL(file);
+const reader = new FileReader();  
+reader.onload = e => {  
+    albumFoto.push(e.target.result);  
+    localStorage.setItem("albumFoto", JSON.stringify(albumFoto));  
+    tampilkanAlbum();  
+    input.value = "";  
+};  
+reader.readAsDataURL(file);
+
 }
-        function hapusFoto(index) {
-    if (!confirm("Yakin mau hapus foto ini?")) return;
+function hapusFoto(index) {
+if (!confirm("Yakin mau hapus foto ini?")) return;
 
-    albumFoto.splice(index, 1);
-    localStorage.setItem("albumFoto", JSON.stringify(albumFoto));
-    tampilkanAlbum();
+albumFoto.splice(index, 1);  
+localStorage.setItem("albumFoto", JSON.stringify(albumFoto));  
+tampilkanAlbum();
+
 }
 
 function tampilkanAlbum() {
-    albumList.innerHTML = "";
+albumList.innerHTML = "";
 
-    albumFoto.forEach((foto, index) => {
-        const isAdmin = localStorage.getItem("isAdmin") === "true";
+albumFoto.forEach((foto, index) => {  
+    const isAdmin = localStorage.getItem("isAdmin") === "true";  
 
-        albumList.innerHTML += `
-            <div class="col-md-4 mb-4">
-                <div class="card position-relative">
-                    <img src="${foto}" class="card-img-top">
+    albumList.innerHTML += `  
+        <div class="col-md-4 mb-4">  
+            <div class="card position-relative">  
+                <img src="${foto}" class="card-img-top">  
 
-                    ${isAdmin ? `
-                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
-                            onclick="hapusFoto(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    ` : ""}
-                </div>
-            </div>
-        `;
-    });
+                ${isAdmin ? `  
+                <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"  
+                        onclick="hapusFoto(${index})">  
+                    <i class="fas fa-trash"></i>  
+                </button>  
+                ` : ""}  
+            </div>  
+        </div>  
+    `;  
+});
+
 }
-        
-</script>
-</body>
-</html>
+
+const jadwalPiket = {
+Senin:   ["Farel","Isra","Rifki","Ani","Azqia","Dafa"],
+Selasa: ["A","B","C","D","E","F"],
+Rabu:   ["A","B","C","D","E","F"],
+Kamis:  ["A","B","C","D","E","F"],
+Jumat:  ["A","B","C","D","E","F"],
+Sabtu:  ["A","B","C","D","E","F"]
+};
+
+const body = document.getElementById("piket-body");
+
+for (const hari in jadwalPiket) {
+const tr = document.createElement("tr");
+
+tr.innerHTML = `  
+    <td><strong>${hari}</strong></td>  
+    ${jadwalPiket[hari].map(nama => `<td>${nama}</td>`).join("")}  
+`;  
+
+body.appendChild(tr);
+
+}
+
+function showSection(id) {
+document.querySelectorAll('.page-section').forEach(sec => {
+sec.classList.remove('active');
+});
+
+document.getElementById(id).classList.add('active');
+
+}
+
+// tampilkan halaman awal
+showSection('album');
+
+function bukaBiodata(s) {  
+document.getElementById("bioFoto").src = s.foto;  
+document.getElementById("bioNama").innerText = s.nama;  
+document.getElementById("bioAbsen").innerText = s.absen;  
+document.getElementById("bioUmur").innerText = s.umur;  
+document.getElementById("bioLahir").innerText = s.lahir;  
+document.getElementById("bioTinggal").innerText = s.tinggal;  
+
+// Gender  
+document.getElementById("bioGender").innerHTML =  
+    s.gender === "L"  
+    ? '<i class="fas fa-mars text-primary"></i> Laki-laki'  
+    : '<i class="fas fa-venus text-danger"></i> Perempuan';  
+
+// Jabatan icon  
+const icons = {  
+siswa: '<i class="fas fa-user jabatan-icon"></i>',  
+ketua: '<i class="fas fa-crown jabatan-icon"></i>',  
+wakil: '<i class="fas fa-star jabatan-icon"></i>',  
+bendahara: '<i class="fas fa-wallet jabatan-icon"></i>',  
+sekretaris: '<i class="fas fa-pen jabatan-icon"></i>',  
+kebersihan: '<i class="fas fa-broom jabatan-icon"></i>',  
+keamanan: '<i class="fas fa-shield-alt jabatan-icon"></i>',  
+osis: '<img src="logo-osis.png" class="jabatan-osis" title="OSIS">'
+
+};
+
+let jabatanHTML = "";
+
+s.jabatan.forEach(j => {
+if (icons[j]) {
+jabatanHTML += icons[j];
+}
+});
+
+document.getElementById("bioJabatan").innerHTML = jabatanHTML;
+
+new bootstrap.Modal(document.getElementById("bioModal")).show();
+
+}
+
+            
+// ===== KEUANGAN =====
+let keuangan = JSON.parse(localStorage.getItem("keuangan")) || [];
+renderKeuangan();
+
+function renderKeuangan() {
+  const list = document.getElementById("listKeuangan");
+  const saldoEl = document.getElementById("saldoKas");
+  list.innerHTML = "";
+  let saldo = 0;
+
+  keuangan.forEach((k, i) => {
+    saldo += k.jenis === "masuk" ? k.jumlah : -k.jumlah;
+    list.innerHTML += `
+      <li>
+        ${k.jenis === "masuk" ? "➕" : "➖"}
+        ${k.ket} - Rp ${k.jumlah.toLocaleString()}
+      </li>
+    `;
+  });
+
+  saldoEl.innerText = "Rp " + saldo.toLocaleString();
+}
+
+function tambahKeuangan() {
+  const ket = ketKeuangan.value;
+  const jumlah = Number(jumlahKeuangan.value);
+  const jenis = jenisKeuangan.value;
+  if (!ket || !jumlah) return alert("Lengkapi data!");
+
+  keuangan.push({ ket, jumlah, jenis });
+  localStorage.setItem("keuangan", JSON.stringify(keuangan));
+  renderKeuangan();
+  ketKeuangan.value = jumlahKeuangan.value = "";
+}
+
+// ===== CATATAN SEKRETARIS =====
+let catatan = JSON.parse(localStorage.getItem("catatan")) || [];
+renderCatatan();
+
+function renderCatatan() {
+  const ul = document.getElementById("catatanKelas");
+  ul.innerHTML = "";
+  catatan.forEach(c => {
+    ul.innerHTML += `<li>📝 ${c}</li>`;
+  });
+}
+
+function tambahCatatan() {
+  if (!isiCatatan.value) return;
+  catatan.push(isiCatatan.value);
+  localStorage.setItem("catatan", JSON.stringify(catatan));
+  renderCatatan();
+  isiCatatan.value = "";
+}
+
+// ===== ADMIN VISIBILITY =====
+if (localStorage.getItem("isAdmin") === "true") {
+  document.getElementById("formKeuangan").classList.remove("d-none");
+  document.getElementById("formCatatan").classList.remove("d-none");
+}
+
+</script>          <!-- MODAL BIODATA -->  <div class="modal fade" id="bioModal" tabindex="-1">  
+  <div class="modal-dialog modal-dialog-centered">  
+    <div class="modal-content bio-card">  
+      <div class="modal-body text-center">  
+        <img id="bioFoto" class="bio-foto mb-3">  
+        <h5 id="bioNama"></h5>  <div id="bioGender" class="mb-2"></div>  
+
+    <p class="mb-1">🧾 Absen: <span id="bioAbsen"></span></p>  
+    <p class="mb-1">🎂 Umur: <span id="bioUmur"></span> tahun</p>  
+    <p class="mb-3">📅 Lahir: <span id="bioLahir"></span></p>  
+    <p class="mb-3">🏠 Tinggal: <span id="bioTinggal"></span></p>  
+
+    <div id="bioJabatan"></div>  
+  </div>  
+</div>
+
+  </div>  
+</div>              
+</body>  
+</html> 
